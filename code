@@ -1,0 +1,185 @@
+#include <bits/stdc++.h>
+#include <fstream>
+
+using namespace std;
+
+const int MAX_LINES=10000;
+
+// Function to save selected question indices to a file
+void saveSelectedIndices(const vector<int> &indices, const string &saveSelIndices){
+    ofstream file(saveSelIndices);
+    for(int index:indices){
+        file<<index<<endl;
+    }
+    file.close();
+}
+
+// Function to load selected question indices from a file
+vector<int> loadSelectedIndices(const string &loadselInd){
+    vector<int> indices;
+    ifstream file(loadselInd);
+    int index;
+    while(file>>index){
+        indices.push_back(index);
+    }
+    return indices;
+}
+
+int main(){                         
+    ifstream easy_file("/Users/nishitasolanki/Downloads/EASY (1).txt");
+    ifstream med_file("/Users/nishitasolanki/Downloads/MEDIUM.txt");
+    ifstream hard_file("/Users/nishitasolanki/Downloads/HARD.txt");
+
+    if(!easy_file ||!med_file||!hard_file){
+        cout<<"Failed to open the files!"<<endl;
+        return 1;
+    }
+
+    string easy[MAX_LINES]; 
+    string med[MAX_LINES];
+    string hard[MAX_LINES];
+
+    int cnt=0;
+    string ques;
+
+    //read ques from easy file
+    while(getline(easy_file,ques)&&cnt<MAX_LINES){
+        easy[cnt]=ques;
+        cnt++;
+    }
+    easy_file.close();
+
+    cnt=0;
+    string ques1;
+
+    //read ques from medium file
+    while(getline(med_file,ques1)&&cnt<MAX_LINES){
+        med[cnt]=ques1;
+        cnt++;
+    }
+    med_file.close();
+
+    cnt=0;
+    string ques2;
+
+    //read ques from hard file
+    while(getline(hard_file,ques2)&&cnt<MAX_LINES){
+        hard[cnt]=ques2;
+        cnt++;
+    }
+    hard_file.close();
+
+    int n1,n2,n3,marks;
+    cout<<"Enter the no. of easy questions : "<<endl;
+    cin>>n1;
+    cout<<"Enter the no. of medium questions : "<<endl;
+    cin>>n2;
+    cout<<"Enter the no. of hard questions : "<<endl;
+    cin>>n3;
+    cout<<"Enter the total marks"<<endl;
+    cin>>marks;
+    int m1=(2*n1)+(5*n2)+(10*n3);
+    if(m1>marks){
+        cout<<"ERROR!";
+    }
+    else
+{
+    string head = "NIRMA UNIVERSITY QUESTION PAPER";//padding to print it in the middle
+    int totalWidth = 120;
+    int padding = (totalWidth - head.length()) / 2;
+
+    for (int i = 0; i< padding; i++)
+    {
+        cout << ' ';
+    }
+
+    cout << head << endl;
+
+    srand(static_cast<unsigned>(time(nullptr)));//Seed with current time
+
+    int qno = 1; // Initialize the question number to 1
+
+    vector<int> selectedEasyIndices, selectedMediumIndices, selectedHardIndices;
+
+    //Load previously selected question indices
+    vector<int> previousEasyIndices = loadSelectedIndices("selected_easy_indices.txt");
+    vector<int> previousMediumIndices = loadSelectedIndices("selected_medium_indices.txt");
+    vector<int> previousHardIndices = loadSelectedIndices("selected_hard_indices.txt");
+
+    cout << endl;
+    string head1 = "Section-A(2 Marks)";
+    int padding1 = (totalWidth - head1.length()) / 2;
+
+    for(int i = 0; i < padding1; i++)
+    {
+        cout << ' ';
+    }
+    
+    cout << head1 << endl;
+
+    //Select new easy questions by excluding the previous indices
+    for( int i = 0; i < n1; i++)
+    {
+        int q;
+        do
+        {
+            q = rand() % cnt;
+        } while (find(selectedEasyIndices.begin(), selectedEasyIndices.end(), q) != selectedEasyIndices.end() || 
+        find(previousEasyIndices.begin(), previousEasyIndices.end(), q) != previousEasyIndices.end());
+        selectedEasyIndices.push_back(q);
+        cout << qno++ << easy[q] << endl;
+    }
+
+    cout << endl;
+    string head2 = "Section-B(2 Marks)";
+    int padding2 = (totalWidth - head2.length()) / 2;
+
+    for(int i = 0; i < padding2; i++)
+    {
+        cout << ' ';
+    }
+    
+    cout << head2 << endl;
+
+    for( int i = 0; i < n2; i++)
+    {
+        int q;
+        do
+        {
+            q = rand() % cnt;
+        } while (find(selectedMediumIndices.begin(), selectedMediumIndices.end(), q) != selectedMediumIndices.end() || find(previousMediumIndices.begin(), 
+        previousMediumIndices.end(), q) != previousMediumIndices.end());
+        selectedMediumIndices.push_back(q);
+        cout << qno++ << med[q] << endl;
+    }
+
+    cout << endl;
+    string head3 = "Section-C(2 Marks)";
+    int padding3 = (totalWidth - head3.length()) / 2;
+
+    for(int i = 0; i < padding3; i++)
+    {
+        cout << ' ';
+    }
+    
+    cout << head3 << endl;
+    for( int i = 0; i < n3; i++)
+    {
+        int q;
+        do
+        {
+            q = rand() % cnt;
+        } while (find(selectedHardIndices.begin(), selectedHardIndices.end(), q) != selectedHardIndices.end() || 
+        find(previousHardIndices.begin(), previousHardIndices.end(), q) != previousHardIndices.end());
+        selectedHardIndices.push_back(q);
+        cout << qno++ << hard[q] << endl;
+    }
+
+    //Save the new selected indices for the next rub
+    saveSelectedIndices(selectedEasyIndices, "selected_easy_indices.txt");
+    saveSelectedIndices(selectedMediumIndices, "selected_medium_indices.txt");
+    saveSelectedIndices(selectedHardIndices, "selected_hard_indices.txt");
+}
+
+    return 0;
+}
